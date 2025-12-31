@@ -1,0 +1,41 @@
+WITH MovingAverages AS (
+    SELECT 
+        Date,
+        [Close],
+        -- Calculate 50-Day SMA
+        AVG([Close]) OVER (
+            ORDER BY Date
+            ROWS BETWEEN 49 PRECEDING AND CURRENT ROW
+        ) AS SMA_50,
+        -- Calculate 200-Day SMA
+        AVG([Close]) OVER (
+            ORDER BY Date
+            ROWS BETWEEN 199 PRECEDING AND CURRENT ROW
+        ) AS SMA_200
+    FROM 
+        stock_prices
+),
+CrossoverCheck AS (
+    SELECT 
+        *,
+        -- Get previous day's values to compare
+        LAG(SMA_50) OVER (ORDER BY Date) AS Prev_SMA_50,
+        LAG(SMA_200) OVER (ORDER BY Date) AS Prev_SMA_200
+    FROM 
+        MovingAverages
+)
+SELECT 
+    Date,
+    [Close],
+    SMA_50,
+    SMA_200,
+    -- Golden Cross Logic:
+    -- If Yesterday 50 < 200 AND Today 50 > 200, then 1, else 0
+    CASE 
+        WHEN Prev_SMA_50 < Prev_SMA_200 AND SMA_50 > SMA_200 THEN 1 
+        ELSE 0 
+    END AS Golden_Cross
+FROM 
+    CrossoverCheck
+ORDER BY 
+    Date desc;

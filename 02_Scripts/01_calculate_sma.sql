@@ -1,7 +1,7 @@
 SELECT 
     Date,
-    Close_Price,
-    AVG(Close_Price) OVER (
+    [Close],
+    AVG([Close]) OVER (
         ORDER BY Date
         ROWS BETWEEN 49 PRECEDING AND CURRENT ROW
     ) AS SMA_50
