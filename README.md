@@ -3,6 +3,7 @@
  Overview
   ![1](1.png)
  ![2](2.png)
+ ![SqlResults](sqlresults.png)
  ![Solution](solution.png)
  ![py output](spy_sma_chart.png)
 
